@@ -13,7 +13,7 @@
     "qs": "^6.9.4"
   },
   "scripts": {
-    "start": "node src",
+    "start": "tsc & env NODE_ENV=production node dist/index.js",
     "start:dev": "nodemon --watch src --exec ts-node src/index.ts"
   },
   "devDependencies": {
