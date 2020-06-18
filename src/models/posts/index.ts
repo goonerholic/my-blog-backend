@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
 
+interface Post extends mongoose.Document {
+  title: string;
+  body: string;
+  tags: string[];
+}
+
 const PostSchema = new mongoose.Schema({
   title: String,
   body: String,
@@ -10,6 +16,6 @@ const PostSchema = new mongoose.Schema({
   },
 });
 
-const Post = mongoose.model('Post', PostSchema);
+const Post = mongoose.model<Post>('Post', PostSchema);
 
 export default Post;

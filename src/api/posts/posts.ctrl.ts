@@ -49,16 +49,21 @@ export async function write(req: Request, res: Response) {
 
 // GET
 export async function list(req: Request, res: Response) {
-  const page = parseInt((req.query.page as string) || '1');
+  const page = parseInt(<string>req.query.page || '1');
 
   try {
     const posts = await Post.find()
       .sort({ _id: -1 })
       .limit(10)
-      .skip((page - 1) * 10);
+      .skip((page - 1) * 10)
+      .lean();
 
     const postCount = await Post.countDocuments();
     res.set('Last-Page', Math.ceil(postCount / 10).toString());
+    const trimmedPost = posts.map((post) => ({
+      ...post,
+      body: post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}`,
+    }));
     res.status(200).send(posts);
   } catch (e) {
     res.status(500).send(e.message);
