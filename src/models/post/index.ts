@@ -6,7 +6,7 @@ interface Post extends mongoose.Document {
   tags: string[];
 }
 
-const PostSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema({
   title: String,
   body: String,
   tags: [String],
@@ -16,6 +16,6 @@ const PostSchema = new mongoose.Schema({
   },
 });
 
-const Post = mongoose.model<Post>('Post', PostSchema);
+const Post = mongoose.model<Post>('Post', postSchema);
 
 export default Post;

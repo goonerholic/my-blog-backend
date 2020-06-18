@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import Post from './../../models/posts';
+import Post from '../../models/post';
 import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
 
@@ -64,7 +64,7 @@ export async function list(req: Request, res: Response) {
       ...post,
       body: post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}`,
     }));
-    res.status(200).send(posts);
+    res.status(200).send(trimmedPost);
   } catch (e) {
     res.status(500).send(e.message);
   }

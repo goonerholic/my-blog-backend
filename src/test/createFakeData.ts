@@ -1,4 +1,4 @@
-import Post from '../models/posts';
+import Post from '../models/post';
 
 export default async function createFakeData(count: number) {
   const posts = [...Array(count).keys()].map((i) => ({

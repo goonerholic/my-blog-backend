@@ -1,7 +1,7 @@
 import express from 'express';
 import { config } from './config';
 import loaderInit from './loaders/index';
-import createFakeData from './test/createFakeData';
+// import createFakeData from './test/createFakeData';
 
 const { port, mongoUri } = config;
 
