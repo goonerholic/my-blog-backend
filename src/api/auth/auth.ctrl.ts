@@ -89,4 +89,6 @@ export function check(req: Request, res: Response, next: NextFunction) {
 
 export function logout(req: Request, res: Response, next: NextFunction) {
   // logout
+  res.clearCookie('access_token');
+  res.status(204).send('Signed out.');
 }

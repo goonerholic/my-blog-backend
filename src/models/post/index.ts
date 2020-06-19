@@ -4,6 +4,10 @@ interface Post extends mongoose.Document {
   title: string;
   body: string;
   tags: string[];
+  user: {
+    _id: mongoose.Types.ObjectId;
+    username: string;
+  };
 }
 
 const postSchema = new mongoose.Schema({
@@ -13,6 +17,10 @@ const postSchema = new mongoose.Schema({
   publishedDate: {
     type: Date,
     default: Date.now,
+  },
+  user: {
+    _id: mongoose.Types.ObjectId,
+    username: String,
   },
 });
 

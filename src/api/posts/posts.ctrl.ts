@@ -1,20 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Post from '../../models/post';
-import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
-
-const { ObjectId } = mongoose.Types;
-
-// [middleware]
-// Object ID validation
-export function checkObjectId(req: Request, res: Response, next: NextFunction) {
-  const { id } = req.params;
-  if (!ObjectId.isValid(id)) {
-    res.status(400).send('Bad request.');
-    return;
-  }
-  return next();
-}
 
 // [Controllers]
 // POST
@@ -37,6 +23,7 @@ export async function write(req: Request, res: Response) {
     title,
     body,
     tags,
+    user: res.locals.user,
   });
 
   try {
@@ -51,8 +38,20 @@ export async function write(req: Request, res: Response) {
 export async function list(req: Request, res: Response) {
   const page = parseInt(<string>req.query.page || '1');
 
+  if (page < 1) {
+    res.status(400).send('No post.');
+    return;
+  }
+
+  const { tag, username } = req.query;
+
+  const mongoQuery = {
+    ...(<string>username ? { 'user.username': username } : {}),
+    ...(<string>tag ? { tags: tag } : {}),
+  };
+
   try {
-    const posts = await Post.find()
+    const posts = await Post.find(mongoQuery)
       .sort({ _id: -1 })
       .limit(10)
       .skip((page - 1) * 10)
@@ -72,17 +71,7 @@ export async function list(req: Request, res: Response) {
 
 // GET:id
 export async function read(req: Request, res: Response) {
-  const { id } = req.params;
-  try {
-    const post = await Post.findById(id);
-    if (!post) {
-      res.status(404).send('Post not found.');
-      return;
-    }
-    res.status(200).send(post);
-  } catch (e) {
-    res.status(500).send(e.message);
-  }
+  res.send(res.locals.post);
 }
 
 // DELETE:id
