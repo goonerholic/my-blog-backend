@@ -1,6 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
 import Post from '../../models/post';
 import Joi from '@hapi/joi';
+import sanitizeHtml from 'sanitize-html';
+
+// helpers
+const sanitizeOption = {
+  allowedTags: [
+    'h1',
+    'h2',
+    'b',
+    'i',
+    'u',
+    's',
+    'p',
+    'ul',
+    'ol',
+    'li',
+    'blockquote',
+    'a',
+    'img',
+  ],
+  allowedAttributes: {
+    a: ['href', 'name', 'target'],
+    img: ['src'],
+    li: ['class'],
+  },
+  allowedSchemes: ['data', 'http'],
+};
+
+function removeHtmlAndShorten(body: string) {
+  const filtered = sanitizeHtml(body, {
+    allowedTags: [],
+  });
+  return filtered.length > 200 ? `${filtered.slice(0, 200)}...` : filtered;
+}
 
 // [Controllers]
 // POST
@@ -21,7 +54,7 @@ export async function write(req: Request, res: Response) {
   const { title, body, tags } = req.body;
   const post = new Post({
     title,
-    body,
+    body: sanitizeHtml(body, sanitizeOption),
     tags,
     user: res.locals.user,
   });
@@ -61,7 +94,7 @@ export async function list(req: Request, res: Response) {
     res.set('Last-Page', Math.ceil(postCount / 10).toString());
     const trimmedPost = posts.map((post) => ({
       ...post,
-      body: post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}`,
+      body: removeHtmlAndShorten(post.body),
     }));
     res.status(200).send(trimmedPost);
   } catch (e) {
@@ -101,8 +134,13 @@ export async function update(req: Request, res: Response) {
     return;
   }
 
+  const nextData = { ...req.body };
+  if (nextData.body) {
+    nextData.body = sanitizeHtml(nextData.body);
+  }
+
   try {
-    const post = await Post.findByIdAndUpdate(id, req.body, {
+    const post = await Post.findByIdAndUpdate(id, nextData, {
       new: true,
     });
     if (!post) {
