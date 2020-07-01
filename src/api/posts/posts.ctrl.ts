@@ -93,7 +93,10 @@ export async function list(req: Request, res: Response) {
     console.log(posts);
     const postCount = await Post.countDocuments(mongoQuery);
     console.log(postCount);
-    res.set('Last-Page', Math.ceil(postCount / 10).toString());
+    res.set(
+      'Last-Page',
+      (postCount === 0 ? 1 : Math.ceil(postCount / 10)).toString(),
+    );
     const trimmedPost = posts.map((post) => ({
       ...post,
       body: removeHtmlAndShorten(post.body),
