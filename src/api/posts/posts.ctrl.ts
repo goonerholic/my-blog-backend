@@ -42,7 +42,7 @@ export async function write(req: Request, res: Response) {
   const schema = Joi.object().keys({
     title: Joi.string().required(),
     body: Joi.string().required(),
-    tags: Joi.array().items(Joi.string().required()),
+    tags: Joi.array().items(Joi.string()),
   });
   // Handling bad request
   const result = schema.validate(req.body);
@@ -90,7 +90,9 @@ export async function list(req: Request, res: Response) {
       .skip((page - 1) * 10)
       .lean();
 
-    const postCount = await Post.countDocuments();
+    console.log(posts);
+    const postCount = await Post.countDocuments(mongoQuery);
+    console.log(postCount);
     res.set('Last-Page', Math.ceil(postCount / 10).toString());
     const trimmedPost = posts.map((post) => ({
       ...post,
@@ -136,7 +138,7 @@ export async function update(req: Request, res: Response) {
 
   const nextData = { ...req.body };
   if (nextData.body) {
-    nextData.body = sanitizeHtml(nextData.body);
+    nextData.body = sanitizeHtml(nextData.body, sanitizeOption);
   }
 
   try {
