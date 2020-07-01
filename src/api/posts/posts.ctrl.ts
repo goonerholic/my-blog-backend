@@ -8,6 +8,8 @@ const sanitizeOption = {
   allowedTags: [
     'h1',
     'h2',
+    'span',
+    'pre',
     'b',
     'i',
     'u',
@@ -19,6 +21,7 @@ const sanitizeOption = {
     'blockquote',
     'a',
     'img',
+    'br',
   ],
   allowedAttributes: {
     a: ['href', 'name', 'target'],
