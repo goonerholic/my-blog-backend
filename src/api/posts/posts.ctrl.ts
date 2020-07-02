@@ -22,11 +22,15 @@ const sanitizeOption = {
     'a',
     'img',
     'br',
+    'div',
   ],
   allowedAttributes: {
     a: ['href', 'name', 'target'],
     img: ['src'],
     li: ['class'],
+    span: ['class'],
+    pre: ['class'],
+    div: ['class'],
   },
   allowedSchemes: ['data', 'http'],
 };
@@ -57,7 +61,7 @@ export async function write(req: Request, res: Response) {
   const { title, body, tags } = req.body;
   const post = new Post({
     title,
-    body: sanitizeHtml(body, sanitizeOption),
+    body, //: sanitizeHtml(body, sanitizeOption),
     tags,
     user: res.locals.user,
   });
@@ -93,9 +97,7 @@ export async function list(req: Request, res: Response) {
       .skip((page - 1) * 10)
       .lean();
 
-    console.log(posts);
     const postCount = await Post.countDocuments(mongoQuery);
-    console.log(postCount);
     res.set(
       'Last-Page',
       (postCount === 0 ? 1 : Math.ceil(postCount / 10)).toString(),
