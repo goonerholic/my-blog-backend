@@ -4,29 +4,32 @@ import Joi from '@hapi/joi';
 import sanitizeHtml from 'sanitize-html';
 
 // helpers
-const sanitizeOption = {
-  allowedTags: [
-    'h1',
-    'h2',
-    'b',
-    'i',
-    'u',
-    's',
-    'p',
-    'ul',
-    'ol',
-    'li',
-    'blockquote',
-    'a',
-    'img',
-  ],
-  allowedAttributes: {
-    a: ['href', 'name', 'target'],
-    img: ['src'],
-    li: ['class'],
-  },
-  allowedSchemes: ['data', 'http'],
-};
+// const sanitizeOption = {
+//   allowedTags: [
+//     'h1',
+//     'h2',
+//     'b',
+//     'i',
+//     'u',
+//     's',
+//     'p',
+//     'ul',
+//     'ol',
+//     'li',
+//     'blockquote',
+//     'a',
+//     'img',
+//     'pre',
+//     'span',
+//     'br',
+//   ],
+//   allowedAttributes: {
+//     a: ['href', 'name', 'target'],
+//     img: ['src'],
+//     li: ['class'],
+//   },
+//   allowedSchemes: ['data', 'http'],
+// };
 
 function removeHtmlAndShorten(body: string) {
   const filtered = sanitizeHtml(body, {
@@ -54,7 +57,7 @@ export async function write(req: Request, res: Response) {
   const { title, body, tags } = req.body;
   const post = new Post({
     title,
-    body: sanitizeHtml(body, sanitizeOption),
+    body, // sanitizeHtml(body, sanitizeOption),
     tags,
     user: res.locals.user,
   });
@@ -90,9 +93,7 @@ export async function list(req: Request, res: Response) {
       .skip((page - 1) * 10)
       .lean();
 
-    console.log(posts);
     const postCount = await Post.countDocuments(mongoQuery);
-    console.log(postCount);
     res.set(
       'Last-Page',
       (postCount === 0 ? 1 : Math.ceil(postCount / 10)).toString(),
@@ -139,13 +140,13 @@ export async function update(req: Request, res: Response) {
     return;
   }
 
-  const nextData = { ...req.body };
-  if (nextData.body) {
-    nextData.body = sanitizeHtml(nextData.body, sanitizeOption);
-  }
+  // const nextData = { ...req.body };
+  // if (nextData.body) {
+  //   nextData.body = sanitizeHtml(nextData.body, sanitizeOption);
+  // }
 
   try {
-    const post = await Post.findByIdAndUpdate(id, nextData, {
+    const post = await Post.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     if (!post) {
