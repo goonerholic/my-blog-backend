@@ -9,6 +9,6 @@ const { port, mongoUri } = config;
   const app = express();
   await loaderInit({ app, mongoUri, port });
 
-  // for test
-  // await createFakeData(40);
+  module.exports = app;
+  return app;
 })();
