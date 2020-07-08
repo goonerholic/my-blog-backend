@@ -35,4 +35,12 @@ describe('Register Endpoint', () => {
     expect(res.status).toEqual(200);
     expect(ObjectId.isValid(res.body?._id)).toEqual(true);
   });
+
+  it('should send 409 error', async () => {
+    const res = await request(app)
+      .post('/api/auth/register')
+      .send(authArgument);
+
+    expect(res.status).toEqual(409);
+  });
 });

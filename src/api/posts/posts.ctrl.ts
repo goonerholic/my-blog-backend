@@ -144,7 +144,6 @@ export async function update(req: Request, res: Response) {
   // if (nextData.body) {
   //   nextData.body = sanitizeHtml(nextData.body, sanitizeOption);
   // }
-  console.log(req.body);
   try {
     const post = await Post.findByIdAndUpdate(id, req.body, {
       new: true,
