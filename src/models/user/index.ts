@@ -6,14 +6,18 @@ import { config } from '../../config';
 const { jwtSecret } = config;
 
 // [type interfaces for Document, Model]
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
 interface User extends mongoose.Document {
   username: string;
   hashedPassword: string;
   setPassword(password: string): Promise<void>;
   checkPassword(password: string): Promise<boolean>;
-  serialize(): any;
+  serialize(): SerializedUser;
   generateToken(): string;
 }
+
+interface SerializedUser extends Omit<User, 'hashedPassword'> {}
 
 interface UserModel extends mongoose.Model<User> {
   findByUsername(username: string): Promise<User>;
@@ -40,7 +44,7 @@ userSchema.methods.checkPassword = async function (
   return result;
 };
 
-userSchema.methods.serialize = function (): any {
+userSchema.methods.serialize = function (): SerializedUser {
   const data = this.toJSON();
   delete data.hashedPassword;
   return data;

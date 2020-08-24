@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+interface Comment {
+  user: string;
+  body: string;
+}
+
 interface Post extends mongoose.Document {
   title: string;
   body: string;
@@ -8,6 +13,7 @@ interface Post extends mongoose.Document {
     _id: mongoose.Types.ObjectId;
     username: string;
   };
+  comments: Comment[];
 }
 
 const postSchema = new mongoose.Schema({
@@ -21,6 +27,10 @@ const postSchema = new mongoose.Schema({
   user: {
     _id: mongoose.Types.ObjectId,
     username: String,
+  },
+  comments: {
+    user: String,
+    body: String,
   },
 });
 
