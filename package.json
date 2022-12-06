@@ -13,7 +13,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.19",
     "morgan": "^1.10.0",
-    "qs": "^6.9.4",
+    "qs": "^6.9.7",
     "sanitize-html": "^2.3.2"
   },
   "scripts": {
